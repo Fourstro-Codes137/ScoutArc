@@ -1,0 +1,2257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScoutArc Network</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --purple: #9b63d8;
+  --purple-dark: #21172b;
+
+  --background: #0d0b10;
+  --sidebar: #121016;
+  --panel: #151219;
+  --border: #29242f;
+
+  --text: #eeeaf2;
+  --muted: #8e8795;
+
+  --grid-opacity: .055;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--background);
+  color: var(--text);
+}
+
+body {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  background-image:
+    linear-gradient(
+      rgba(155, 99, 216, var(--grid-opacity)) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(155, 99, 216, var(--grid-opacity)) 1px,
+      transparent 1px
+    );
+
+  background-size: 42px 42px;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+
+  width: 225px;
+  padding: 18px 12px;
+
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+
+  z-index: 1000;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 2px 8px 24px;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 8px;
+
+  background: var(--purple-dark);
+  color: #c79bea;
+
+  font-weight: 800;
+  font-size: 19px;
+
+  border: 1px solid #342641;
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.version {
+  margin-top: 3px;
+
+  color: #69636e;
+  font-size: 11px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.nav-button {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 10px 11px;
+
+  border: 0;
+  border-radius: 7px;
+
+  background: transparent;
+  color: var(--muted);
+
+  text-align: left;
+  font-size: 14px;
+
+  transition: .15s ease;
+}
+
+.nav-button:hover {
+  background: #1b1720;
+  color: var(--text);
+}
+
+.nav-button.active {
+  background: var(--purple-dark);
+  color: #c79bea;
+}
+
+.nav-icon {
+  width: 23px;
+
+  text-align: center;
+
+  font-size: 16px;
+
+  flex: 0 0 23px;
+}
+
+.sidebar-footer {
+  position: absolute;
+
+  left: 20px;
+  bottom: 17px;
+
+  color: #5e5964;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.main {
+  min-height: 100vh;
+  margin-left: 225px;
+}
+
+.topbar {
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 27px;
+
+  background: rgba(13, 11, 16, .92);
+
+  border-bottom: 1px solid var(--border);
+
+  position: sticky;
+  top: 0;
+
+  z-index: 900;
+
+  backdrop-filter: blur(8px);
+}
+
+.search {
+  width: 360px;
+  max-width: 100%;
+
+  padding: 9px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  outline: none;
+
+  background: #151219;
+  color: var(--text);
+}
+
+.search::placeholder {
+  color: #625c68;
+}
+
+.search:focus {
+  border-color: #65427f;
+}
+
+.content {
+  width: min(1050px, 100%);
+
+  margin: auto;
+
+  padding: 34px 28px 60px;
+}
+
+
+/* =========================
+   PAGES
+========================= */
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.label {
+  margin-bottom: 7px;
+
+  color: var(--purple);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: .7px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 29px;
+}
+
+h2 {
+  margin: 0 0 7px;
+  font-size: 20px;
+}
+
+p {
+  margin: 0;
+
+  color: var(--muted);
+
+  line-height: 1.55;
+}
+
+
+/* =========================
+   HOME
+========================= */
+
+.welcome {
+  padding: 27px;
+
+  background: var(--panel);
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.welcome h1 {
+  font-size: 31px;
+}
+
+.welcome p {
+  max-width: 650px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+
+  margin-top: 19px;
+
+  flex-wrap: wrap;
+}
+
+.button {
+  padding: 9px 13px;
+
+  border: 1px solid #332c39;
+  border-radius: 6px;
+
+  background: #1a1620;
+  color: #ded7e4;
+
+  transition: .15s ease;
+}
+
+.button:hover {
+  background: #231c2a;
+}
+
+.button.primary {
+  border-color: #704797;
+  background: #704797;
+  color: #fff;
+}
+
+.quick {
+  margin-top: 28px;
+}
+
+.info-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 12px;
+
+  margin-top: 12px;
+}
+
+.info-card {
+  min-height: 120px;
+
+  padding: 17px;
+
+  background: var(--panel);
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.info-card strong {
+  display: block;
+
+  margin-bottom: 6px;
+
+  font-size: 14px;
+}
+
+.info-card p {
+  font-size: 13px;
+}
+
+.promo {
+  margin-top: 14px;
+
+  padding: 17px;
+
+  background: #131016;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.promo-title {
+  font-size: 14px;
+  font-weight: 700;
+
+  margin-bottom: 5px;
+}
+
+
+/* =========================
+   EMPTY STATES
+========================= */
+
+.empty {
+  margin-top: 18px;
+
+  padding: 48px 20px;
+
+  text-align: center;
+
+  border: 1px dashed #332d38;
+  border-radius: 9px;
+
+  color: #77717e;
+}
+
+.empty-icon {
+  margin-bottom: 9px;
+
+  font-size: 26px;
+}
+
+.empty strong {
+  display: block;
+
+  color: #a39ba9;
+
+  margin-bottom: 5px;
+}
+
+
+/* =========================
+   TOOLS
+========================= */
+
+.tool-card {
+  width: 100%;
+
+  margin-top: 18px;
+  padding: 17px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  text-align: left;
+
+  background: var(--panel);
+  color: var(--text);
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.tool-card:hover {
+  border-color: #493756;
+  background: #19151e;
+}
+
+.tool-icon {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 8px;
+
+  background: var(--purple-dark);
+  color: #c79bea;
+
+  font-size: 20px;
+}
+
+.tool-card h3 {
+  margin: 0 0 3px;
+
+  font-size: 15px;
+}
+
+.tool-card p {
+  font-size: 12px;
+}
+
+
+/* =========================
+   THEMES
+========================= */
+
+.theme-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 12px;
+
+  margin-top: 18px;
+}
+
+.theme-card {
+  padding: 18px;
+
+  background: var(--panel);
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  text-align: left;
+
+  color: var(--text);
+}
+
+.theme-card:hover {
+  border-color: #493756;
+}
+
+.theme-preview {
+  height: 70px;
+
+  border-radius: 7px;
+
+  margin-bottom: 13px;
+
+  border: 1px solid var(--border);
+
+  background:
+    linear-gradient(
+      rgba(155, 99, 216, .08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(155, 99, 216, .08) 1px,
+      transparent 1px
+    ),
+    #0d0b10;
+
+  background-size: 18px 18px;
+}
+
+
+/* Secret frog theme preview */
+
+.theme-preview.frog {
+  background:
+    radial-gradient(
+      circle at 30% 35%,
+      rgba(120, 184, 74, .25),
+      transparent 28%
+    ),
+    linear-gradient(
+      rgba(120, 184, 74, .08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(120, 184, 74, .08) 1px,
+      transparent 1px
+    ),
+    #0d110b;
+
+  background-size:
+    auto,
+    18px 18px,
+    18px 18px;
+}
+
+.theme-card h3 {
+  margin: 0 0 5px;
+
+  font-size: 15px;
+}
+
+.theme-card p {
+  font-size: 12px;
+
+  margin-bottom: 12px;
+}
+
+
+/* =========================
+   SETTINGS
+========================= */
+
+.settings {
+  margin-top: 18px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.setting {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 15px 17px;
+
+  background: var(--panel);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.setting:last-child {
+  border-bottom: 0;
+}
+
+.setting-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.setting-description {
+  margin-top: 3px;
+
+  color: #716b77;
+
+  font-size: 12px;
+}
+
+select {
+  min-width: 110px;
+
+  padding: 7px 9px;
+
+  border: 1px solid #342d3b;
+  border-radius: 6px;
+
+  outline: none;
+
+  background: #1a1620;
+  color: #ddd6e4;
+}
+
+
+/* =========================
+   FROG / AMPHIBIA THEME
+========================= */
+
+body.frog-mode {
+  --purple: #78b84a;
+  --purple-dark: #24351b;
+
+  --background: #0d110b;
+  --sidebar: #10150e;
+  --panel: #141b11;
+  --border: #283322;
+
+  --text: #edf3e9;
+  --muted: #929d8b;
+
+  background-image:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(120, 184, 74, .07),
+      transparent 24%
+    ),
+    linear-gradient(
+      rgba(120, 184, 74, .055) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(120, 184, 74, .055) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    auto,
+    42px 42px,
+    42px 42px;
+}
+
+body.frog-mode .brand-mark {
+  background: #24351b;
+  color: #a9d878;
+
+  border-color: #344d25;
+}
+
+body.frog-mode .nav-button.active {
+  color: #a9d878;
+}
+
+body.frog-mode .button.primary {
+  border-color: #56852f;
+  background: #56852f;
+}
+
+body.frog-mode .tool-icon {
+  background: #24351b;
+  color: #a9d878;
+}
+
+body.frog-mode .theme-preview:not(.frog) {
+  background:
+    linear-gradient(
+      rgba(120, 184, 74, .08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(120, 184, 74, .08) 1px,
+      transparent 1px
+    ),
+    #0d110b;
+
+  background-size: 18px 18px;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+.menu-button {
+  display: none;
+
+  width: 40px;
+  height: 38px;
+
+  margin-right: 10px;
+
+  padding: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  background: #151219;
+  color: var(--text);
+
+  font-size: 21px;
+}
+
+.menu-backdrop {
+  display: none;
+}
+
+@media (max-width: 760px) {
+
+  .menu-backdrop {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 999;
+
+    background: rgba(0, 0, 0, .55);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: opacity .2s ease;
+  }
+
+  .menu-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sidebar {
+    width: min(280px, 84vw);
+
+    transform: translate3d(-105%, 0, 0);
+
+    transition: transform .22s ease;
+
+    box-shadow: 12px 0 35px rgba(0, 0, 0, .35);
+
+    pointer-events: none;
+
+    overflow-y: auto;
+  }
+
+  .sidebar.open {
+    transform: translate3d(0, 0, 0);
+
+    pointer-events: auto;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .topbar {
+    padding: 0 12px;
+  }
+
+  .menu-button {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 40px;
+  }
+
+  .search {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .content {
+    padding: 25px 15px 45px;
+  }
+
+  .info-grid,
+  .theme-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .setting {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .nav-button,
+  .button,
+  select {
+    min-height: 44px;
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+<!-- Mobile menu overlay -->
+<div
+  class="menu-backdrop"
+  id="menuBackdrop">
+</div>
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside
+  class="sidebar"
+  id="sidebar">
+
+  <div class="brand">
+
+    <div class="brand-mark">
+      ⌁
+    </div>
+
+    <div>
+      <div class="brand-name">
+        ScoutArc
+      </div>
+
+      <div class="version">
+        Pre-Alpha 0.1
+      </div>
+    </div>
+
+  </div>
+
+
+  <nav
+    class="nav"
+    aria-label="Main navigation">
+
+    <button
+      class="nav-button active"
+      data-page="home"
+      type="button">
+
+      <span class="nav-icon">⌂</span>
+      Home
+
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-page="games"
+      type="button">
+
+      <span class="nav-icon">▣</span>
+      Games
+
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-page="profiles"
+      type="button">
+
+      <span class="nav-icon">◉</span>
+      Profiles
+
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-page="chat"
+      type="button">
+
+      <span class="nav-icon">◇</span>
+      Chat
+
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-page="tools"
+      type="button">
+
+      <span class="nav-icon">⌘</span>
+      Tools
+
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-page="themes"
+      type="button">
+
+      <span class="nav-icon">✦</span>
+      Themes
+
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-page="settings"
+      type="button">
+
+      <span class="nav-icon">⚙</span>
+      Settings
+
+    </button>
+
+  </nav>
+
+
+  <div class="sidebar-footer">
+    ScoutArc Network<br>
+    small project • early build
+  </div>
+
+</aside>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="main">
+
+
+  <!-- TOP BAR -->
+
+  <header class="topbar">
+
+    <button
+      class="menu-button"
+      id="menuButton"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false">
+
+      ☰
+
+    </button>
+
+
+    <input
+      class="search"
+      id="search"
+      type="search"
+      placeholder="Search ScoutArc..."
+      autocomplete="off">
+
+  </header>
+
+
+  <div class="content">
+
+
+    <!-- =====================
+         HOME
+    ====================== -->
+
+    <section
+      class="page active"
+      id="home">
+
+      <div class="label">
+        HOME
+      </div>
+
+
+      <div class="welcome">
+
+        <h1>
+          Welcome to ScoutArc.
+        </h1>
+
+        <p>
+          A small, still-growing place for games,
+          profiles, chat, tools, and whatever gets
+          added next.
+        </p>
+
+
+        <div class="actions">
+
+          <button
+            class="button primary"
+            data-open="games"
+            type="button">
+
+            Browse Games
+
+          </button>
+
+
+          <button
+            class="button"
+            data-open="themes"
+            type="button">
+
+            View Themes
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="quick">
+
+        <div class="label">
+          QUICK INFO
+        </div>
+
+
+        <div class="info-grid">
+
+
+          <div class="info-card">
+
+            <strong>
+              Games
+            </strong>
+
+            <p>
+              The games area is ready for real
+              entries as they're added.
+              No placeholder games pretending
+              to work.
+            </p>
+
+          </div>
+
+
+          <div class="info-card">
+
+            <strong>
+              Profiles
+            </strong>
+
+            <p>
+              Profile features are still being
+              worked on in this pre-alpha build.
+            </p>
+
+          </div>
+
+
+          <div class="info-card">
+
+            <strong>
+              Tools
+            </strong>
+
+            <p>
+              ScoutArc tools live here as the
+              project grows.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="promo">
+
+        <div class="promo-title">
+          ScoutArc Network
+        </div>
+
+        <p>
+          Pre-alpha build. Things can change,
+          break, or get rebuilt. That's normal
+          around here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================
+         GAMES
+    ====================== -->
+
+    <section
+      class="page"
+      id="games">
+
+      <div class="label">
+        GAMES
+      </div>
+
+      <h1>
+        Games
+      </h1>
+
+      <p>
+        The game library is currently empty
+        while ScoutArc is being built.
+      </p>
+
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          ▣
+        </div>
+
+        <strong>
+          No games added yet
+        </strong>
+
+        <span>
+          Real games will go here when
+          they're ready.
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================
+         PROFILES
+    ====================== -->
+
+    <section
+      class="page"
+      id="profiles">
+
+      <div class="label">
+        PROFILES
+      </div>
+
+      <h1>
+        Profiles
+      </h1>
+
+      <p>
+        People and profiles will eventually
+        live here.
+      </p>
+
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          ◉
+        </div>
+
+        <strong>
+          Profiles are still being built
+        </strong>
+
+        <span>
+          Pre-alpha feature.
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================
+         CHAT
+    ====================== -->
+
+    <section
+      class="page"
+      id="chat">
+
+      <div class="label">
+        CHAT
+      </div>
+
+      <h1>
+        Chat
+      </h1>
+
+      <p>
+        The chat area is reserved for
+        community features.
+      </p>
+
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          ◇
+        </div>
+
+        <strong>
+          Chat isn't connected yet
+        </strong>
+
+        <span>
+          This page is ready for the
+          future system.
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================
+         TOOLS
+    ====================== -->
+
+    <section
+      class="page"
+      id="tools">
+
+      <div class="label">
+        TOOLS
+      </div>
+
+      <h1>
+        Tools
+      </h1>
+
+      <p>
+        Small utilities and project tools
+        will be collected here.
+      </p>
+
+
+      <button
+        class="tool-card"
+        id="proxyButton"
+        type="button">
+
+        <div class="tool-icon">
+          ⌁
+        </div>
+
+        <div>
+
+          <h3>
+            Proxy
+          </h3>
+
+          <p>
+            Open ScoutArc Proxy
+          </p>
+
+        </div>
+
+      </button>
+
+    </section>
+
+
+    <!-- =====================
+         THEMES
+    ====================== -->
+
+    <section
+      class="page"
+      id="themes">
+
+      <div class="label">
+        THEMES
+      </div>
+
+      <h1>
+        Themes
+      </h1>
+
+      <p>
+        ScoutArc stays purple by default.
+        The frog theme is optional.
+      </p>
+
+
+      <div class="theme-grid">
+
+
+        <!-- PURPLE -->
+
+        <button
+          class="theme-card"
+          id="purpleTheme"
+          type="button">
+
+          <div class="theme-preview"></div>
+
+          <h3>
+            ScoutArc Purple
+          </h3>
+
+          <p>
+            The normal ScoutArc look.
+          </p>
+
+          <span class="button primary">
+            Use Theme
+          </span>
+
+        </button>
+
+
+        <!-- SECRET FROG THEME -->
+
+        <button
+          class="theme-card"
+          id="frogTheme"
+          type="button">
+
+          <div class="theme-preview frog"></div>
+
+          <h3>
+            Greenhouse
+          </h3>
+
+          <p>
+            A subtle frog-inspired theme
+            hidden inside ScoutArc.
+          </p>
+
+          <span class="button">
+            Use Theme
+          </span>
+
+        </button>
+
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================
+         SETTINGS
+    ====================== -->
+
+    <section
+      class="page"
+      id="settings">
+
+      <div class="label">
+        SETTINGS
+      </div>
+
+      <h1>
+        Settings
+      </h1>
+
+      <p>
+        Simple settings for the pre-alpha build.
+      </p>
+
+
+      <div class="settings">
+
+
+        <!-- GRID -->
+
+        <div class="setting">
+
+          <div>
+
+            <div class="setting-title">
+              Grid
+            </div>
+
+            <div class="setting-description">
+              Show the ScoutArc background grid.
+            </div>
+
+          </div>
+
+
+          <select data-setting="grid">
+
+            <option value="on">
+              On
+            </option>
+
+            <option value="off">
+              Off
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- GRID SIZE -->
+
+        <div class="setting">
+
+          <div>
+
+            <div class="setting-title">
+              Grid Size
+            </div>
+
+            <div class="setting-description">
+              Change the size of the background grid.
+            </div>
+
+          </div>
+
+
+          <select data-setting="grid-size">
+
+            <option value="small">
+              Small
+            </option>
+
+            <option value="medium">
+              Medium
+            </option>
+
+            <option value="large">
+              Large
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- GRID OPACITY -->
+
+        <div class="setting">
+
+          <div>
+
+            <div class="setting-title">
+              Grid Opacity
+            </div>
+
+            <div class="setting-description">
+              Adjust how visible the grid is.
+            </div>
+
+          </div>
+
+
+          <select data-setting="grid-opacity">
+
+            <option value="low">
+              Low
+            </option>
+
+            <option value="medium">
+              Medium
+            </option>
+
+            <option value="high">
+              High
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- BRIGHTNESS -->
+
+        <div class="setting">
+
+          <div>
+
+            <div class="setting-title">
+              Background Brightness
+            </div>
+
+            <div class="setting-description">
+              Adjust the overall background brightness.
+            </div>
+
+          </div>
+
+
+          <select data-setting="brightness">
+
+            <option value="dark">
+              Dark
+            </option>
+
+            <option value="normal">
+              Normal
+            </option>
+
+            <option value="bright">
+              Bright
+            </option>
+
+          </select>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+  </div>
+
+</main>
+
+
+<script>
+(function () {
+
+  "use strict";
+
+
+  /* =========================
+     ELEMENTS
+  ========================= */
+
+  const navButtons =
+    document.querySelectorAll(".nav-button[data-page]");
+
+  const pages =
+    document.querySelectorAll(".page");
+
+  const menuButton =
+    document.getElementById("menuButton");
+
+  const sidebar =
+    document.getElementById("sidebar");
+
+  const menuBackdrop =
+    document.getElementById("menuBackdrop");
+
+  const search =
+    document.getElementById("search");
+
+  const settingInputs =
+    document.querySelectorAll("[data-setting]");
+
+  const proxyButton =
+    document.getElementById("proxyButton");
+
+  const purpleTheme =
+    document.getElementById("purpleTheme");
+
+  const frogTheme =
+    document.getElementById("frogTheme");
+
+
+  /* =========================
+     MOBILE MENU
+  ========================= */
+
+  function closeMenu() {
+
+    if (sidebar) {
+      sidebar.classList.remove("open");
+    }
+
+    if (menuButton) {
+
+      menuButton.classList.remove("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+    if (menuBackdrop) {
+      menuBackdrop.classList.remove("show");
+    }
+
+    document.body.style.overflow = "";
+
+  }
+
+
+  function toggleMenu(event) {
+
+    if (event) {
+      event.preventDefault();
+    }
+
+    if (!sidebar || !menuButton) {
+      return;
+    }
+
+    const open =
+      !sidebar.classList.contains("open");
+
+
+    sidebar.classList.toggle(
+      "open",
+      open
+    );
+
+
+    menuButton.classList.toggle(
+      "open",
+      open
+    );
+
+
+    menuButton.setAttribute(
+      "aria-expanded",
+      open ? "true" : "false"
+    );
+
+
+    if (menuBackdrop) {
+
+      menuBackdrop.classList.toggle(
+        "show",
+        open
+      );
+
+    }
+
+
+    if (window.innerWidth <= 760) {
+
+      document.body.style.overflow =
+        open ? "hidden" : "";
+
+    }
+
+  }
+
+
+  /* =========================
+     PAGE NAVIGATION
+  ========================= */
+
+  function showPage(pageName) {
+
+    const target =
+      document.getElementById(pageName);
+
+    if (!target) {
+      return;
+    }
+
+
+    pages.forEach(function (page) {
+
+      page.classList.toggle(
+        "active",
+        page.id === pageName
+      );
+
+    });
+
+
+    navButtons.forEach(function (button) {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.page === pageName
+      );
+
+    });
+
+
+    closeMenu();
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  /*
+    Make these global.
+
+    This prevents the old:
+    "ReferenceError: Can't find variable: showPage"
+    problem if something uses inline handlers.
+  */
+
+  window.showPage = showPage;
+  window.toggleMenu = toggleMenu;
+  window.closeMenu = closeMenu;
+
+
+  /* =========================
+     NAV BUTTONS
+  ========================= */
+
+  navButtons.forEach(function (button) {
+
+    button.addEventListener(
+      "click",
+      function () {
+
+        showPage(
+          button.dataset.page
+        );
+
+      }
+    );
+
+  });
+
+
+  /* =========================
+     HOME BUTTONS
+  ========================= */
+
+  document
+    .querySelectorAll("[data-open]")
+    .forEach(function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          showPage(
+            button.dataset.open
+          );
+
+        }
+      );
+
+    });
+
+
+  /* =========================
+     MOBILE BUTTON
+  ========================= */
+
+  if (menuButton) {
+
+    menuButton.addEventListener(
+      "click",
+      toggleMenu
+    );
+
+  }
+
+
+  if (menuBackdrop) {
+
+    menuBackdrop.addEventListener(
+      "click",
+      closeMenu
+    );
+
+  }
+
+
+  /* =========================
+     SEARCH
+  ========================= */
+
+  if (search) {
+
+    search.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (event.key !== "Enter") {
+          return;
+        }
+
+
+        const text =
+          search.value
+            .toLowerCase()
+            .trim();
+
+
+        const routes = [
+
+          ["game", "games"],
+          ["games", "games"],
+
+          ["profile", "profiles"],
+          ["profiles", "profiles"],
+
+          ["chat", "chat"],
+
+          ["proxy", "tools"],
+          ["tool", "tools"],
+          ["tools", "tools"],
+
+          ["theme", "themes"],
+          ["themes", "themes"],
+
+          ["setting", "settings"],
+          ["settings", "settings"],
+
+          ["home", "home"]
+
+        ];
+
+
+        const match =
+          routes.find(function (item) {
+
+            return text.includes(
+              item[0]
+            );
+
+          });
+
+
+        if (match) {
+
+          showPage(
+            match[1]
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =========================
+     LOCAL STORAGE
+  ========================= */
+
+  function saveSetting(name, value) {
+
+    try {
+
+      localStorage.setItem(
+        "scoutarc-" + name,
+        value
+      );
+
+    } catch (error) {
+
+      // Storage may be unavailable.
+    }
+
+  }
+
+
+  function getSetting(name, fallback) {
+
+    try {
+
+      return (
+        localStorage.getItem(
+          "scoutarc-" + name
+        ) || fallback
+      );
+
+    } catch (error) {
+
+      return fallback;
+
+    }
+
+  }
+
+
+  /* =========================
+     GRID
+  ========================= */
+
+  function updateGrid() {
+
+    if (
+      getSetting(
+        "grid",
+        "on"
+      ) !== "on"
+    ) {
+
+      document.body.style.backgroundImage =
+        "none";
+
+      return;
+
+    }
+
+
+    const sizes = {
+
+      small: "28px 28px",
+      medium: "42px 42px",
+      large: "64px 64px"
+
+    };
+
+
+    const opacity = {
+
+      low: ".035",
+      medium: ".055",
+      high: ".09"
+
+    };
+
+
+    const size =
+      sizes[
+        getSetting(
+          "grid-size",
+          "medium"
+        )
+      ] || sizes.medium;
+
+
+    const level =
+      opacity[
+        getSetting(
+          "grid-opacity",
+          "medium"
+        )
+      ] || opacity.medium;
+
+
+    /* Frog theme grid */
+
+    if (
+      document.body.classList.contains(
+        "frog-mode"
+      )
+    ) {
+
+      document.body.style.backgroundImage =
+
+        "radial-gradient(" +
+        "circle at 15% 20%," +
+        "rgba(120,184,74,.07)," +
+        "transparent 24%)," +
+
+        "linear-gradient(" +
+        "rgba(120,184,74," +
+        level +
+        ") 1px,transparent 1px)," +
+
+        "linear-gradient(" +
+        "90deg," +
+        "rgba(120,184,74," +
+        level +
+        ") 1px,transparent 1px)";
+
+
+      document.body.style.backgroundSize =
+        "auto," + size + "," + size;
+
+    }
+
+    /* Purple theme grid */
+
+    else {
+
+      document.body.style.backgroundImage =
+
+        "linear-gradient(" +
+        "rgba(155,99,216," +
+        level +
+        ") 1px,transparent 1px)," +
+
+        "linear-gradient(" +
+        "90deg," +
+        "rgba(155,99,216," +
+        level +
+        ") 1px,transparent 1px)";
+
+
+      document.body.style.backgroundSize =
+        size;
+
+    }
+
+  }
+
+
+  /* =========================
+     SETTINGS
+  ========================= */
+
+  function applySetting(
+    name,
+    value
+  ) {
+
+    if (
+      name === "grid" ||
+      name === "grid-size" ||
+      name === "grid-opacity"
+    ) {
+
+      updateGrid();
+
+    }
+
+
+    if (name === "brightness") {
+
+      const values = {
+
+        dark: "#08070b",
+        normal: "#0d0b10",
+        bright: "#121016"
+
+      };
+
+
+      document.documentElement
+        .style
+        .setProperty(
+          "--background",
+          values[value] ||
+          values.normal
+        );
+
+    }
+
+  }
+
+
+  settingInputs.forEach(
+    function (input) {
+
+      const saved =
+        getSetting(
+          input.dataset.setting,
+          ""
+        );
+
+
+      if (saved) {
+
+        input.value = saved;
+
+      }
+
+
+      input.addEventListener(
+        "change",
+        function () {
+
+          saveSetting(
+            input.dataset.setting,
+            input.value
+          );
+
+
+          applySetting(
+            input.dataset.setting,
+            input.value
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  /* =========================
+     THEMES
+  ========================= */
+
+  function setTheme(theme) {
+
+    if (theme === "frog") {
+
+      document.body.classList.add(
+        "frog-mode"
+      );
+
+      saveSetting(
+        "theme",
+        "frog"
+      );
+
+    }
+
+    else {
+
+      document.body.classList.remove(
+        "frog-mode"
+      );
+
+      saveSetting(
+        "theme",
+        "purple"
+      );
+
+    }
+
+
+    updateGrid();
+
+  }
+
+
+  if (purpleTheme) {
+
+    purpleTheme.addEventListener(
+      "click",
+      function () {
+
+        setTheme("purple");
+
+      }
+    );
+
+  }
+
+
+  if (frogTheme) {
+
+    frogTheme.addEventListener(
+      "click",
+      function () {
+
+        setTheme("frog");
+
+      }
+    );
+
+  }
+
+
+  /* =========================
+     PROXY PLACEHOLDER
+  ========================= */
+
+  if (proxyButton) {
+
+    proxyButton.addEventListener(
+      "click",
+      function () {
+
+        alert(
+          "ScoutArc Proxy is coming soon."
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =========================
+     LOAD SAVED THEME
+  ========================= */
+
+  if (
+    getSetting(
+      "theme",
+      "purple"
+    ) === "frog"
+  ) {
+
+    document.body.classList.add(
+      "frog-mode"
+    );
+
+  }
+
+
+  /* =========================
+     LOAD SETTINGS
+  ========================= */
+
+  applySetting(
+    "brightness",
+    getSetting(
+      "brightness",
+      "normal"
+    )
+  );
+
+
+  updateGrid();
+
+
+  /* =========================
+     START ON HOME
+  ========================= */
+
+  showPage("home");
+
+
+  /* =========================
+     DESKTOP RESIZE
+  ========================= */
+
+  window.addEventListener(
+    "resize",
+    function () {
+
+      if (window.innerWidth > 760) {
+
+        closeMenu();
+
+      }
+
+    }
+  );
+
+})();
+</script>
+
+</body>
+</html>
