@@ -586,6 +586,36 @@
       transition: 0.15s;
     }
 
+    .theme-card strong {
+      display: block;
+
+      margin-bottom: 10px;
+    }
+
+    .theme-color {
+      display: flex;
+      align-items: center;
+
+      gap: 8px;
+
+      color: var(--text);
+
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .theme-swatch {
+      width: 18px;
+      height: 18px;
+
+      flex: 0 0 18px;
+
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 50%;
+
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.18);
+    }
+
     .theme-card:hover {
       border-color: var(--accent);
 
@@ -600,18 +630,6 @@
           var(--accent) 65%,
           transparent
         );
-    }
-
-    .theme-card strong {
-      display: block;
-
-      margin-bottom: 6px;
-    }
-
-    .theme-card span {
-      color: var(--muted);
-
-      font-size: 12px;
     }
 
     /* =========================
@@ -1662,8 +1680,14 @@
               ${theme[0]}
             </strong>
 
-            <span>
-              Apply theme
+            <span class="theme-color">
+              <span
+                class="theme-swatch"
+                style="background:${theme[1]}"
+                aria-hidden="true"
+              ></span>
+
+              <span>${theme[1]}</span>
             </span>
           `;
 
