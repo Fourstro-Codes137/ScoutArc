@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScoutArc</title>
+
+<style>
+:root{
+  --accent:#9b63d8;
+  --accent2:#7042a8;
+  --bg:#0d0b10;
+  --panel:#151219;
+  --panel2:#19151e;
+  --sidebar:#111015;
+  --border:#29242f;
+  --text:#eeeaf2;
+  --muted:#8e8795;
+  --grid-opacity:.08;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+/* GRID */
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:var(--grid-opacity);
+  background-image:
+    linear-gradient(var(--accent) 1px,transparent 1px),
+    linear-gradient(90deg,var(--accent) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+
+/* LAYOUT */
+
+.app{
+  position:relative;
+  z-index:1;
+  min-height:100vh;
+  display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:230px;
+  min-width:230px;
+  height:100vh;
+  position:fixed;
+  left:0;
+  top:0;
+  background:rgba(17,16,21,.96);
+  border-right:1px solid var(--border);
+  padding:22px 14px;
+  display:flex;
+  flex-direction:column;
+  z-index:100;
+  backdrop-filter:blur(14px);
+}
+
+.logo{
+  padding:8px 10px 25px;
+}
+
+.logo-name{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.7px;
+}
+
+.logo-name span{
+  color:var(--accent);
+}
+
+.logo-sub{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.nav button{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  text-align:left;
+  padding:12px 13px;
+  border-radius:9px;
+  cursor:pointer;
+  font-size:14px;
+  transition:.15s;
+}
+
+.nav button:hover{
+  color:var(--text);
+  background:rgba(255,255,255,.04);
+}
+
+.nav button.active{
+  color:white;
+  background:var(--accent);
+}
+
+.sidebar-bottom{
+  margin-top:auto;
+  padding:10px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+/* MAIN */
+
+.main{
+  margin-left:230px;
+  width:calc(100% - 230px);
+  min-height:100vh;
+}
+
+.topbar{
+  height:64px;
+  display:flex;
+  align-items:center;
+  padding:0 28px;
+  border-bottom:1px solid var(--border);
+  background:rgba(13,11,16,.78);
+  backdrop-filter:blur(15px);
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+
+.mobile-menu{
+  display:none;
+  border:0;
+  background:var(--panel);
+  color:white;
+  padding:9px 11px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-right:10px;
+}
+
+.status{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.status-dot{
+  width:7px;
+  height:7px;
+  display:inline-block;
+  border-radius:50%;
+  background:#69d391;
+  margin-right:7px;
+}
+
+/* PAGES */
+
+.content{
+  padding:34px;
+  max-width:1500px;
+  margin:auto;
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.label{
+  color:var(--accent);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  margin-bottom:8px;
+}
+
+h1{
+  margin:0;
+  font-size:34px;
+  letter-spacing:-1px;
+}
+
+.subtitle{
+  color:var(--muted);
+  margin:8px 0 28px;
+}
+
+/* HOME */
+
+.hero{
+  background:linear-gradient(
+    135deg,
+    rgba(155,99,216,.18),
+    rgba(112,66,168,.04)
+  );
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:32px;
+  margin-bottom:20px;
+}
+
+.hero h2{
+  margin:0 0 8px;
+  font-size:27px;
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted);
+  max-width:650px;
+  line-height:1.6;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.card{
+  background:rgba(21,18,25,.9);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:20px;
+}
+
+.card-title{
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.card-text{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+}
+
+/* GAMES */
+
+.games-shell{
+  background:#0b0a0e;
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  min-height:720px;
+  width:100%;
+}
+
+/*
+  IMPORTANT:
+  This is the ONLY element named "games".
+  Lumin owns this element.
+*/
+
+#games{
+  width:100%;
+  min-height:720px;
+  display:block;
+}
+
+/* OTHER PAGES */
+
+.empty{
+  border:1px dashed var(--border);
+  border-radius:13px;
+  padding:40px;
+  text-align:center;
+  color:var(--muted);
+  background:rgba(21,18,25,.6);
+}
+
+/* THEMES */
+
+.theme-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:12px;
+}
+
+.theme{
+  border:1px solid var(--border);
+  background:var(--panel);
+  border-radius:12px;
+  padding:16px;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.theme:hover{
+  transform:translateY(-2px);
+  border-color:var(--accent);
+}
+
+.theme-preview{
+  height:60px;
+  border-radius:8px;
+  margin-bottom:12px;
+}
+
+.theme-name{
+  font-size:13px;
+  font-weight:700;
+}
+
+/* SETTINGS */
+
+.settings{
+  display:grid;
+  gap:12px;
+  max-width:700px;
+}
+
+.setting{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:17px;
+}
+
+.setting label{
+  display:block;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.setting small{
+  color:var(--muted);
+}
+
+.setting input[type="range"]{
+  width:100%;
+}
+
+/* FROG MODE */
+
+.frog{
+  --accent:#72c94a;
+  --accent2:#3f8c2d;
+  --bg:#081008;
+  --panel:#101a10;
+  --panel2:#142114;
+  --sidebar:#0a120a;
+  --border:#203820;
+  --text:#edf7ea;
+  --muted:#91a58e;
+}
+
+.frog-rain{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:2;
+  overflow:hidden;
+}
+
+.frog-rain span{
+  position:absolute;
+  top:-50px;
+  font-size:24px;
+  opacity:.15;
+  animation:frogFall linear infinite;
+}
+
+@keyframes frogFall{
+  from{
+    transform:translateY(-50px) rotate(0deg);
+  }
+  to{
+    transform:translateY(110vh) rotate(360deg);
+  }
+}
+
+/* MOBILE */
+
+@media(max-width:800px){
+
+  .sidebar{
+    transform:translateX(-100%);
+    transition:.2s;
+  }
+
+  .sidebar.open{
+    transform:translateX(0);
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .mobile-menu{
+    display:block;
+  }
+
+  .content{
+    padding:20px 15px;
+  }
+
+  .topbar{
+    padding:0 15px;
+  }
+
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  h1{
+    font-size:28px;
+  }
+
+  .games-shell,
+  #games{
+    min-height:650px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+      <div class="logo-name">Scout<span>Arc</span></div>
+      <div class="logo-sub">Lumin-powered network</div>
+    </div>
+
+    <nav class="nav">
+
+      <button data-page="home" class="active">
+        🏠 Home
+      </button>
+
+      <button data-page="games">
+        🎮 Games
+      </button>
+
+      <button data-page="profiles">
+        👤 Profiles
+      </button>
+
+      <button data-page="chat">
+        💬 Chat
+      </button>
+
+      <button data-page="tools">
+        🛠️ Tools
+      </button>
+
+      <button data-page="themes">
+        🎨 Themes
+      </button>
+
+      <button data-page="settings">
+        ⚙️ Settings
+      </button>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+      ScoutArc • Pre-Alpha
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <header class="topbar">
+
+      <button class="mobile-menu" id="mobileMenu">
+        ☰
+      </button>
+
+      <div class="status">
+        <span class="status-dot"></span>
+        ScoutArc online
+      </div>
+
+    </header>
+
+
+    <div class="content">
+
+      <!-- HOME -->
+
+      <section class="page active" id="home">
+
+        <div class="label">SCOUTARC</div>
+
+        <h1>Welcome back.</h1>
+
+        <p class="subtitle">
+          A lightweight place for games, profiles, chat and tools.
+        </p>
+
+        <div class="hero">
+
+          <h2>🎮 Game library</h2>
+
+          <p>
+            ScoutArc is built around the Lumin game library,
+            giving the Games section a proper searchable browser-game
+            experience without fake placeholder games.
+          </p>
+
+        </div>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="card-title">🎮 Lumin</div>
+            <div class="card-text">
+              The Games page is powered directly by Lumin.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🎨 Themes</div>
+            <div class="card-text">
+              Change the entire ScoutArc appearance.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🐸 Frog Mode</div>
+            <div class="card-text">
+              Turn the entire interface into frog mode.
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- GAMES -->
+
+      <section class="page" id="games-page">
+
+        <div class="label">LUMIN</div>
+
+        <h1>Games</h1>
+
+        <p class="subtitle">
+          Browse the Lumin game library.
+        </p>
+
+        <div class="games-shell">
+
+          <!-- LUMIN OWNS THIS CONTAINER -->
+          <div id="games"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- PROFILES -->
+
+      <section class="page" id="profiles">
+
+        <div class="label">COMMUNITY</div>
+
+        <h1>Profiles</h1>
+
+        <p class="subtitle">
+          ScoutArc profiles will appear here.
+        </p>
+
+        <div class="empty">
+          Profiles are coming in a future ScoutArc build.
+        </div>
+
+      </section>
+
+
+      <!-- CHAT -->
+
+      <section class="page" id="chat">
+
+        <div class="label">COMMUNITY</div>
+
+        <h1>Chat</h1>
+
+        <p class="subtitle">
+          ScoutArc chat.
+        </p>
+
+        <div class="empty">
+          Chat is currently in pre-alpha.
+        </div>
+
+      </section>
+
+
+      <!-- TOOLS -->
+
+      <section class="page" id="tools">
+
+        <div class="label">TOOLS</div>
+
+        <h1>Tools</h1>
+
+        <p class="subtitle">
+          ScoutArc utilities.
+        </p>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="card-title">🌐 Proxy</div>
+            <div class="card-text">
+              Placeholder for a future ScoutArc tool.
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- THEMES -->
+
+      <section class="page" id="themes">
+
+        <div class="label">CUSTOMIZATION</div>
+
+        <h1>Themes</h1>
+
+        <p class="subtitle">
+          Change the ScoutArc interface.
+        </p>
+
+        <div class="theme-grid" id="themeGrid"></div>
+
+      </section>
+
+
+      <!-- SETTINGS -->
+
+      <section class="page" id="settings">
+
+        <div class="label">CONFIGURATION</div>
+
+        <h1>Settings</h1>
+
+        <p class="subtitle">
+          Customize your ScoutArc experience.
+        </p>
+
+        <div class="settings">
+
+          <div class="setting">
+
+            <label>
+              Grid
+            </label>
+
+            <small>
+              Show the ScoutArc background grid.
+            </small>
+
+            <br><br>
+
+            <input
+              type="checkbox"
+              id="gridToggle"
+              checked
+            >
+
+          </div>
+
+
+          <div class="setting">
+
+            <label>
+              Grid opacity
+            </label>
+
+            <small>
+              Adjust the background grid.
+            </small>
+
+            <br><br>
+
+            <input
+              type="range"
+              id="gridOpacity"
+              min="0"
+              max="0.2"
+              step="0.01"
+              value="0.08"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- FROG EFFECT CONTAINER -->
+<div class="frog-rain" id="frogRain"></div>
+
+
+<!--
+========================================================
+LUMIN
+========================================================
+
+This is intentionally kept extremely close to the
+official Lumin quickstart.
+
+One container.
+One script.
+One init call.
+
+========================================================
+-->
+
+<script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
+
+<script>
+
+  /*
+   * Initialize Lumin ONCE.
+   *
+   * The Games page uses:
+   *
+   * <div id="games"></div>
+   *
+   * No other element uses that ID.
+   */
+
+  let luminStarted = false;
+
+  function startLumin(){
+
+    if(luminStarted){
+      return;
+    }
+
+    if(
+      typeof window.Lumin === "undefined" ||
+      typeof window.Lumin.init !== "function"
+    ){
+
+      console.error(
+        "ScoutArc: Lumin did not load."
+      );
+
+      return;
+    }
+
+    try{
+
+      window.Lumin.init({
+        container:"#games",
+        theme:"dark"
+      });
+
+      luminStarted = true;
+
+      console.log(
+        "ScoutArc: Lumin initialized."
+      );
+
+    }catch(error){
+
+      console.error(
+        "ScoutArc: Lumin initialization failed.",
+        error
+      );
+
+    }
+
+  }
+
+
+  /*
+   * NAVIGATION
+   */
+
+  const pages = [
+    ...document.querySelectorAll(".page")
+  ];
+
+  const buttons = [
+    ...document.querySelectorAll("[data-page]")
+  ];
+
+
+  function showPage(id){
+
+    let targetId = id;
+
+    if(id === "games"){
+      targetId = "games-page";
+    }
+
+    const target =
+      document.getElementById(targetId);
+
+    if(!target){
+      return;
+    }
+
+    pages.forEach(page => {
+
+      page.classList.toggle(
+        "active",
+        page === target
+      );
+
+    });
+
+
+    buttons.forEach(button => {
+
+      const buttonPage =
+        button.dataset.page;
+
+      button.classList.toggle(
+        "active",
+        buttonPage === id
+      );
+
+    });
+
+
+    /*
+     * Lumin is started the first time
+     * the Games section is opened.
+     */
+
+    if(id === "games"){
+      startLumin();
+    }
+
+
+    /*
+     * Close mobile menu.
+     */
+
+    document
+      .getElementById("sidebar")
+      .classList.remove("open");
+
+  }
+
+
+  buttons.forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        showPage(
+          button.dataset.page
+        );
+
+      }
+    );
+
+  });
+
+
+  /*
+   * MOBILE MENU
+   */
+
+  document
+    .getElementById("mobileMenu")
+    .addEventListener(
+      "click",
+      () => {
+
+        document
+          .getElementById("sidebar")
+          .classList.toggle("open");
+
+      }
+    );
+
+
+  /*
+   * THEMES
+   */
+
+  const themes = {
+
+    Purple:{
+      accent:"#9b63d8",
+      accent2:"#7042a8",
+      bg:"#0d0b10",
+      panel:"#151219",
+      sidebar:"#111015"
+    },
+
+    Ocean:{
+      accent:"#45aeea",
+      accent2:"#2874a6",
+      bg:"#081017",
+      panel:"#101a21",
+      sidebar:"#09131a"
+    },
+
+    Sunset:{
+      accent:"#ff7b54",
+      accent2:"#c84e32",
+      bg:"#130b09",
+      panel:"#1d1210",
+      sidebar:"#120b09"
+    },
+
+    Cyber:{
+      accent:"#00e5ff",
+      accent2:"#007d91",
+      bg:"#050b0d",
+      panel:"#0b1518",
+      sidebar:"#071012"
+    },
+
+    Rose:{
+      accent:"#ef6b9a",
+      accent2:"#a53d63",
+      bg:"#12090e",
+      panel:"#1b1016",
+      sidebar:"#10090d"
+    },
+
+    Midnight:{
+      accent:"#758cff",
+      accent2:"#4656aa",
+      bg:"#070914",
+      panel:"#101222",
+      sidebar:"#090b18"
+    },
+
+    Forest:{
+      accent:"#66c26b",
+      accent2:"#3f8245",
+      bg:"#091009",
+      panel:"#111b11",
+      sidebar:"#0a120a"
+    },
+
+    Ember:{
+      accent:"#ff6248",
+      accent2:"#a83323",
+      bg:"#120907",
+      panel:"#1b100e",
+      sidebar:"#100907"
+    },
+
+    Mint:{
+      accent:"#63d6b0",
+      accent2:"#379a7c",
+      bg:"#08110f",
+      panel:"#101b18",
+      sidebar:"#09130f"
+    },
+
+    Lavender:{
+      accent:"#b18cff",
+      accent2:"#7454b7",
+      bg:"#0d0914",
+      panel:"#17101f",
+      sidebar:"#100b17"
+    },
+
+    Cherry:{
+      accent:"#ff4d6d",
+      accent2:"#a62943",
+      bg:"#12070a",
+      panel:"#1c0d11",
+      sidebar:"#10070a"
+    },
+
+    Solar:{
+      accent:"#ffc857",
+      accent2:"#c48e23",
+      bg:"#110e07",
+      panel:"#1b170d",
+      sidebar:"#100d07"
+    },
+
+    Ice:{
+      accent:"#8edcff",
+      accent2:"#4e91b0",
+      bg:"#071016",
+      panel:"#0f1a20",
+      sidebar:"#081218"
+    },
+
+    Grape:{
+      accent:"#a56cff",
+      accent2:"#653cb0",
+      bg:"#0d0713",
+      panel:"#170d20",
+      sidebar:"#100914"
+    },
+
+    Toxic:{
+      accent:"#9dff3f",
+      accent2:"#58a51f",
+      bg:"#0a1005",
+      panel:"#111a0a",
+      sidebar:"#0b1206"
+    },
+
+    Coffee:{
+      accent:"#c68b5b",
+      accent2:"#805333",
+      bg:"#100b08",
+      panel:"#19120e",
+      sidebar:"#100c09"
+    },
+
+    Slate:{
+      accent:"#9aa7b5",
+      accent2:"#626d78",
+      bg:"#0b0e11",
+      panel:"#14181c",
+      sidebar:"#0d1013"
+    },
+
+    Candy:{
+      accent:"#ff82c8",
+      accent2:"#b94e8e",
+      bg:"#120911",
+      panel:"#1c101a",
+      sidebar:"#10090f"
+    },
+
+    Neon:{
+      accent:"#d8ff00",
+      accent2:"#91a900",
+      bg:"#090c03",
+      panel:"#131804",
+      sidebar:"#0b0e03"
+    },
+
+    Autumn:{
+      accent:"#d98a45",
+      accent2:"#995825",
+      bg:"#110b07",
+      panel:"#1b120d",
+      sidebar:"#100c08"
+    },
+
+    Frog:{
+      accent:"#72c94a",
+      accent2:"#3f8c2d",
+      bg:"#081008",
+      panel:"#101a10",
+      sidebar:"#0a120a"
+    }
+
+  };
+
+
+  const themeGrid =
+    document.getElementById("themeGrid");
+
+
+  Object.entries(themes).forEach(
+    ([name,colors]) => {
+
+      const card =
+        document.createElement("div");
+
+      card.className = "theme";
+
+
+      const preview =
+        document.createElement("div");
+
+      preview.className =
+        "theme-preview";
+
+
+      preview.style.background =
+        `linear-gradient(
+          135deg,
+          ${colors.accent},
+          ${colors.accent2}
+        )`;
+
+
+      const title =
+        document.createElement("div");
+
+      title.className =
+        "theme-name";
+
+      title.textContent =
+        name;
+
+
+      card.appendChild(preview);
+      card.appendChild(title);
+
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          applyTheme(
+            name,
+            colors
+          );
+
+        }
+      );
+
+
+      themeGrid.appendChild(card);
+
+    }
+  );
+
+
+  function applyTheme(
+    name,
+    colors
+  ){
+
+    const root =
+      document.documentElement;
+
+
+    root.style.setProperty(
+      "--accent",
+      colors.accent
+    );
+
+    root.style.setProperty(
+      "--accent2",
+      colors.accent2
+    );
+
+    root.style.setProperty(
+      "--bg",
+      colors.bg
+    );
+
+    root.style.setProperty(
+      "--panel",
+      colors.panel
+    );
+
+    root.style.setProperty(
+      "--sidebar",
+      colors.sidebar
+    );
+
+
+    /*
+     * Frog Mode
+     */
+
+    if(name === "Frog"){
+
+      document.body.classList.add(
+        "frog"
+      );
+
+      createFrogs();
+
+    }else{
+
+      document.body.classList.remove(
+        "frog"
+      );
+
+      clearFrogs();
+
+    }
+
+
+    localStorage.setItem(
+      "scoutarc-theme",
+      name
+    );
+
+  }
+
+
+  /*
+   * FROGS
+   */
+
+  function createFrogs(){
+
+    const rain =
+      document.getElementById(
+        "frogRain"
+      );
+
+    rain.innerHTML = "";
+
+
+    for(let i=0;i<35;i++){
+
+      const frog =
+        document.createElement("span");
+
+      frog.textContent = "🐸";
+
+      frog.style.left =
+        Math.random()*100 + "%";
+
+      frog.style.animationDuration =
+        (7 + Math.random()*12) + "s";
+
+      frog.style.animationDelay =
+        (-Math.random()*12) + "s";
+
+      frog.style.fontSize =
+        (14 + Math.random()*22) + "px";
+
+      rain.appendChild(frog);
+
+    }
+
+  }
+
+
+  function clearFrogs(){
+
+    document
+      .getElementById("frogRain")
+      .innerHTML = "";
+
+  }
+
+
+  /*
+   * RESTORE THEME
+   */
+
+  const savedTheme =
+    localStorage.getItem(
+      "scoutarc-theme"
+    );
+
+
+  if(
+    savedTheme &&
+    themes[savedTheme]
+  ){
+
+    applyTheme(
+      savedTheme,
+      themes[savedTheme]
+    );
+
+  }
+
+
+  /*
+   * SETTINGS
+   */
+
+  const gridToggle =
+    document.getElementById(
+      "gridToggle"
+    );
+
+  const gridOpacity =
+    document.getElementById(
+      "gridOpacity"
+    );
+
+
+  gridToggle.addEventListener(
+    "change",
+    () => {
+
+      document.documentElement.style
+        .setProperty(
+          "--grid-opacity",
+          gridToggle.checked
+            ? gridOpacity.value
+            : "0"
+        );
+
+      localStorage.setItem(
+        "scoutarc-grid",
+        gridToggle.checked
+      );
+
+    }
+  );
+
+
+  gridOpacity.addEventListener(
+    "input",
+    () => {
+
+      if(gridToggle.checked){
+
+        document.documentElement.style
+          .setProperty(
+            "--grid-opacity",
+            gridOpacity.value
+          );
+
+      }
+
+      localStorage.setItem(
+        "scoutarc-grid-opacity",
+        gridOpacity.value
+      );
+
+    }
+  );
+
+
+  const savedGrid =
+    localStorage.getItem(
+      "scoutarc-grid"
+    );
+
+  const savedOpacity =
+    localStorage.getItem(
+      "scoutarc-grid-opacity"
+    );
+
+
+  if(savedGrid !== null){
+
+    gridToggle.checked =
+      savedGrid === "true";
+
+  }
+
+
+  if(savedOpacity !== null){
+
+    gridOpacity.value =
+      savedOpacity;
+
+  }
+
+
+  document.documentElement.style
+    .setProperty(
+      "--grid-opacity",
+      gridToggle.checked
+        ? gridOpacity.value
+        : "0"
+    );
+
+
+  /*
+   * START ON HOME.
+   */
+
+  showPage("home");
+
+</script>
+
+</body>
+</html>
